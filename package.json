@@ -14,5 +14,16 @@
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^5.1.0"
-  }
+  },
+  "dependencies": {
+    "python": "0.0.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JSheleg/mern-book-search.git"
+  },
+  "bugs": {
+    "url": "https://github.com/JSheleg/mern-book-search/issues"
+  },
+  "homepage": "https://github.com/JSheleg/mern-book-search#readme"
 }
