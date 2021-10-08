@@ -17,7 +17,7 @@ const SearchBooks = () => {
   const [savedBookIds, setSavedBookIds] = useState(getSavedBookIds());
 
   //define the mutation
-  const [saveBook] = useMutation(SAVE_BOOK);
+  const [saveBook, {error}] = useMutation(SAVE_BOOK);
 
   // set up useEffect hook to save `savedBookIds` list to localStorage on component unmount
   // learn more here: https://reactjs.org/docs/hooks-effect.html#effects-with-cleanup
@@ -41,6 +41,7 @@ const SearchBooks = () => {
       }
 
       const { items } = await response.json();
+      console.log(items);
 
       const bookData = items.map((book) => ({
         bookId: book.id,
@@ -48,8 +49,9 @@ const SearchBooks = () => {
         title: book.volumeInfo.title,
         description: book.volumeInfo.description,
         image: book.volumeInfo.imageLinks?.thumbnail || '',
+        link: book.selfLink
       }));
-
+      
       setSearchedBooks(bookData);
       setSearchInput('');
     } catch (err) {
@@ -73,11 +75,11 @@ const SearchBooks = () => {
       await saveBook({
         variables: { book: bookToSave}
       });
-
-      // if (!response.ok) {
-      //   throw new Error('something went wrong!');
-      // }
-
+      
+      if(error){
+        throw new Error('something went wrong');
+      }
+      
       // if book successfully saves to user's account, save book id to state
       setSavedBookIds([...savedBookIds, bookToSave.bookId]);
     } catch (err) {
@@ -130,6 +132,7 @@ const SearchBooks = () => {
                   <Card.Title>{book.title}</Card.Title>
                   <p className='small'>Authors: {book.authors}</p>
                   <Card.Text>{book.description}</Card.Text>
+                  <Card.Link href="#">{book.link}</Card.Link>
                   {Auth.loggedIn() && (
                     <Button
                       disabled={savedBookIds?.some((savedBookId) => savedBookId === book.bookId)}
