@@ -1,6 +1,7 @@
 const { User, Book} = require('../models');
 const { AuthenticationError} = require('apollo-server-express');
 const {signToken} = require('../utils/auth');
+const { __InputValue } = require('graphql');
 
 const resolvers = {
     Query: {
@@ -33,13 +34,13 @@ const resolvers = {
             const token = signToken(user);
             return {token, user};
         },
-        saveBook: async (parent, { book }, context) => {
+        saveBook: async (parent, { input }, context) => {
             if (context.user) {
                 const updatedUser = await User.findOneAndUpdate(
                     { _id: context.user._id },
-                    { $addToSet: {savedBooks: book} },
-                    { new: true }
-                )
+                    { $addToSet: {savedBooks: input} },
+                    { new: true } 
+                ).populate("savedBook")
                 return updatedUser;
             }
             throw new AuthenticationError('You need to be logged in!')
